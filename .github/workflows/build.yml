@@ -25,7 +25,7 @@ jobs:
         run: dotnet publish -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true /p:IncludeAllContentForSelfExtract=true
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: monitor-exe
           path: bin/Release/net8.0/win-x64/publish/monitor.exe
