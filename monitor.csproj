@@ -8,4 +8,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net48'">
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+
 </Project>
