@@ -20,14 +20,9 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
-          cache: true
-          cache-dependency-path: '**/*.csproj'
 
       - name: Restore dependencies
         run: dotnet restore monitor.csproj --nologo
-
-      - name: Publish
-        run: dotnet publish -c Release -r win-x64 --self-contained true
 
       - name: Build (Release)
         run: dotnet build monitor.csproj -c Release --no-restore
@@ -36,10 +31,10 @@ jobs:
         run: dotnet publish monitor.csproj -c Release -f net8.0 -r win-x64 --self-contained true --no-restore /p:PublishSingleFile=true /p:IncludeAllContentForSelfExtract=true /p:OutputType=WinExe
 
       - name: Publish net48 x64
-        run: dotnet publish monitor.csproj -c Release -f net48 --no-restore -p:PlatformTarget=x64 -p:PublishDir=bin/Release/net48/publish-x64/
+        run: dotnet publish monitor.csproj -c Release -f net48 -p:PlatformTarget=x64 -p:PublishDir=bin/Release/net48/publish-x64/
 
       - name: Publish net48 x86
-        run: dotnet publish monitor.csproj -c Release -f net48 --no-restore -p:PlatformTarget=x86 -p:PublishDir=bin/Release/net48/publish-x86/
+        run: dotnet publish monitor.csproj -c Release -f net48 -p:PlatformTarget=x86 -p:PublishDir=bin/Release/net48/publish-x86/
 
       - name: Upload artifact (net8.0)
         uses: actions/upload-artifact@v4
