@@ -22,7 +22,7 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: Restore dependencies
-        run: dotnet restore monitor.csproj --nologo
+        run: dotnet restore monitor.csproj --nologo --force-evaluate
 
       - name: Build (Release)
         run: dotnet build monitor.csproj -c Release --no-restore
