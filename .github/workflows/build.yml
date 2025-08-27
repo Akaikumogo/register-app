@@ -23,8 +23,11 @@ jobs:
           cache: true
           cache-dependency-path: '**/*.csproj'
 
-      - name: Restore
+      - name: Restore dependencies
         run: dotnet restore monitor.csproj --nologo
+
+      - name: Publish
+        run: dotnet publish -c Release -r win-x64 --self-contained true
 
       - name: Build (Release)
         run: dotnet build monitor.csproj -c Release --no-restore
