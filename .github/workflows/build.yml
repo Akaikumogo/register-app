@@ -9,23 +9,55 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout source
+        uses: actions/checkout@v4
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
+          cache: true
+          cache-dependency-path: '**/*.csproj'
 
-      - name: Restore dependencies
-        run: dotnet restore monitor.csproj
+      - name: Restore
+        run: dotnet restore monitor.csproj --nologo
 
-      - name: Publish EXE
-        run: dotnet publish monitor.csproj -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true /p:IncludeAllContentForSelfExtract=true
+      - name: Build (Release)
+        run: dotnet build monitor.csproj -c Release --no-restore
 
-      - name: Upload artifact
+      - name: Publish net8.0 (win-x64, self-contained)
+        run: dotnet publish monitor.csproj -c Release -f net8.0 -r win-x64 --self-contained true --no-restore /p:PublishSingleFile=true /p:IncludeAllContentForSelfExtract=true /p:OutputType=WinExe
+
+      - name: Publish net48 x64
+        run: dotnet publish monitor.csproj -c Release -f net48 --no-restore -p:PlatformTarget=x64 -p:PublishDir=bin/Release/net48/publish-x64/
+
+      - name: Publish net48 x86
+        run: dotnet publish monitor.csproj -c Release -f net48 --no-restore -p:PlatformTarget=x86 -p:PublishDir=bin/Release/net48/publish-x86/
+
+      - name: Upload artifact (net8.0)
         uses: actions/upload-artifact@v4
         with:
-          name: monitor-exe
-          path: bin/Release/net8.0/win-x64/publish/monitor.exe
+          name: monitor-exe-net8-${{ github.run_number }}
+          path: bin/Release/net8.0/win-x64/publish/
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Upload artifact (net48 x64)
+        uses: actions/upload-artifact@v4
+        with:
+          name: monitor-exe-net48-x64-${{ github.run_number }}
+          path: bin/Release/net48/publish-x64/
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload artifact (net48 x86)
+        uses: actions/upload-artifact@v4
+        with:
+          name: monitor-exe-net48-x86-${{ github.run_number }}
+          path: bin/Release/net48/publish-x86/
+          if-no-files-found: error
+          retention-days: 14
